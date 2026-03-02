@@ -13,12 +13,11 @@ export async function userRoutes(fastify: FastifyInstance) {
           name: z.string(),
           age: z.number(),
         }),
-        
       },
     },
     async (request, reply) => {
       const { name, age } = request.body;
-      return { message: `Usuário ${name} criado na rota separada!` };
+      return { message: `Usuário ${name} com ${age} criado na rota separada!` };
     },
   );
 }

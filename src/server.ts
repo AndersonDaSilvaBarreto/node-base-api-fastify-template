@@ -1,5 +1,6 @@
 import Fastify, { type RouteShorthandOptions } from "fastify";
 import cors from "@fastify/cors";
+import helmet from "@fastify/helmet";
 import {
   hasZodFastifySchemaValidationErrors,
   isResponseSerializationError,
@@ -19,6 +20,20 @@ fastify.setValidatorCompiler(validatorCompiler);
 fastify.setSerializerCompiler(serializerCompiler);
 
 await fastify.register(cors);
+await fastify.register(helmet, {
+  contentSecurityPolicy: {
+    directives: {
+      defaultSrc: ["'self'"],
+      scriptSrc: [
+        "'self'",
+        "'unsafe-inline'",
+        "'unsafe-eval'",
+        "http://localhost:5173",
+      ],
+      connectSrc: ["'self'", "http://localhost:5173"],
+    },
+  },
+});
 
 fastify.register(fastifySwagger, {
   openapi: {
