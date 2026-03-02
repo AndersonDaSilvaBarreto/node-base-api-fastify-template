@@ -1,23 +1,21 @@
-import type { FastifyInstance } from "fastify";
-import type { ZodTypeProvider } from "fastify-type-provider-zod";
 import z from "zod";
+import type { FastifyTypeInstance } from "../types/fastifyInstance.js";
 
-export async function userRoutes(fastify: FastifyInstance) {
-  const server = fastify.withTypeProvider<ZodTypeProvider>();
-
-  server.post(
+export async function userRoutes(fastify: FastifyTypeInstance) {
+  fastify.post(
     "/",
     {
       schema: {
         body: z.object({
           name: z.string(),
-          age: z.number(),
+          email: z.email(),
+          password: z.string().min(6),
         }),
       },
     },
     async (request, reply) => {
-      const { name, age } = request.body;
-      return { message: `Usuário ${name} com ${age} criado na rota separada!` };
+      const { name, email, password } = request.body;
+      return;
     },
   );
 }
