@@ -1,0 +1,32 @@
+# Dependências
+node_modules/
+jspm_packages/
+
+# Configurações Pessoais/Segredo (IMPORTANTE)
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Build e Saída
+dist/
+build/
+*.tsbuildinfo
+
+# Pastas de Upload e Imagens (Sua estrutura)
+# Ignora os arquivos dentro, mas mantém a pasta (opcional)
+public/uploads/*
+public/images/*
+tmp/
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+logs/
+*.log
+
+# Sistema
+.DS_Store
+Thumbs.db

@@ -1,0 +1,28 @@
+{
+  "name": "fastify",
+  "version": "1.0.0",
+  "description": "",
+  "license": "ISC",
+  "author": "",
+  "type": "module",
+  "main": "server.js",
+  "scripts": {
+    "dev": "tsx --watch --env-file=.env src/server.ts",
+    "start": "node -env-file=.env dist/server.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "devDependencies": {
+    "@types/cors": "^2.8.19",
+    "@types/node": "^25.3.3",
+    "tsx": "^4.21.0",
+    "typescript": "^5.9.3"
+  },
+  "dependencies": {
+    "@fastify/cors": "^11.2.0",
+    "@fastify/swagger": "^9.7.0",
+    "@fastify/swagger-ui": "^5.2.5",
+    "fastify": "^5.7.4",
+    "fastify-type-provider-zod": "^6.1.0",
+    "zod": "^4.3.6"
+  }
+}
