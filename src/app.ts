@@ -54,9 +54,6 @@ export function buildApp() {
     routePrefix: "/documentation",
   });
 
-  app.register(authRoute, { prefix: "/auth" });
-  app.register(userRoute, { prefix: "/users" });
-
   app.register(fastifyCookie, {
     secret: process.env.COOKIE_SECRET as string,
     hook: "onRequest",
@@ -65,13 +62,28 @@ export function buildApp() {
     secret: process.env.JWT_SECRET as string,
     cookie: {
       cookieName: "access_token",
-      signed: false,
+      signed: true,
     },
   });
+
+  app.decorate(
+    "authenticate",
+    async function (request: FastifyRequest, reply: FastifyReply) {
+      try {
+        await request.jwtVerify();
+      } catch (err) {
+        return reply.status(401).send({ message: "Token inválido ou ausente" });
+      }
+    },
+  );
 
   app.get("/ping", async function ping(request, reply) {
     return { pong: true };
   });
+
+  app.register(authRoute, { prefix: "/auth" });
+  app.register(userRoute, { prefix: "/users" });
+
   app.setErrorHandler((err, req, reply) => {
     if (err instanceof AppError) {
       return reply.status(err.statusCode).send({
@@ -104,6 +116,13 @@ export function buildApp() {
         },
       });
     }
+
+    console.error(err); // Importante para você ver o erro real no terminal
+    return reply.status(500).send({
+      status: "error",
+      message: "Internal Server Error",
+      error: err,
+    });
   });
   return app;
 }

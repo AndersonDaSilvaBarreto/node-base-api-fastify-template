@@ -8,10 +8,10 @@ import type { SignupRequestDto } from "./dto/auth-signup.request.dto.js";
 export async function signupUser(dto: SignupRequestDto) {
   const user = await prisma.user.findUnique({ where: { email: dto.email } });
   if (user) {
-     throw new AppError("Email já está em uso");
+    throw new AppError("Email já está em uso");
   }
 
-  const hashedPassword = await bcrypt.hash(dto.password, 10);
+  const hashedPassword = await bcrypt.hash(dto.password, 12);
 
   const newUser = await prisma.user.create({
     data: {
@@ -23,8 +23,8 @@ export async function signupUser(dto: SignupRequestDto) {
     select: {
       id: true,
       name: true,
-      email: true
-    }
+      email: true,
+    },
   });
 
   return newUser;
@@ -55,4 +55,30 @@ export async function login(dto: LoginRequestDto) {
     userId: user.id,
     refreshToken: refreshToken.token,
   };
+}
+
+export async function refreshToken(oldRefreshToken: string) {
+  const tokenRecord = await prisma.refreshToken.findUnique({
+    where: { token: oldRefreshToken },
+    include: { user: true },
+  });
+  if (!tokenRecord) {
+    throw new AppError("Refresh Token não enviado, inválido ou expirado! 2", 401);
+  }
+
+  if (new Date() > tokenRecord.expiresAt) {
+    await prisma.refreshToken.delete({ where: { id: tokenRecord.id } });
+    throw new AppError("Refresh Token não enviado, inválido ou expirado! 3", 401);
+  }
+
+  const newRefreshToken = uuidv7();
+  let expiresAt = new Date();
+  expiresAt.setDate(expiresAt.getDate() + 7);
+
+  await prisma.refreshToken.update({
+    where: { id: tokenRecord.id },
+    data: { token: newRefreshToken },
+  });
+
+  return { userId: tokenRecord.userId, refresh_token: newRefreshToken };
 }

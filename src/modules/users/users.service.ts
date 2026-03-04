@@ -1,8 +1,7 @@
 import { prisma } from "../../libs/prisma.js";
 
-import { AppError } from "../../errors/app_error.js";
 
-export function getUsers() {
-  const users = prisma.user.findMany();
+export async function getUsers() {
+  const users = await prisma.user.findMany();
   return users;
 }
